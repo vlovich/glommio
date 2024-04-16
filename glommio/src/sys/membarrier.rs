@@ -226,3 +226,8 @@ pub(crate) fn heavy() {
         Fallback => atomic::fence(atomic::Ordering::SeqCst),
     }
 }
+
+#[inline]
+pub(crate) fn initialize_strategy() {
+    let _ = *STRATEGY;
+}
