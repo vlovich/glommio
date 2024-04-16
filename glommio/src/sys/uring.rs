@@ -1290,6 +1290,8 @@ impl Reactor {
         ring_depth: usize,
         blocking_thread: BlockingThreadPool,
     ) -> crate::Result<Reactor, ()> {
+        membarrier::initialize_strategy();
+
         const MIN_MEMLOCK_LIMIT: u64 = 512 * 1024;
         let (memlock_limit, _) = Resource::MEMLOCK.get()?;
         if memlock_limit < MIN_MEMLOCK_LIMIT {
