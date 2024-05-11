@@ -1570,6 +1570,11 @@ impl Reactor {
         self.enqueue_blocking_request(source.inner.clone(), op)
     }
 
+    pub(crate) fn flock(&self, source: &Source, flags: libc::c_int) -> impl Future<Output = ()> {
+        let op = BlockingThreadOp::Flock(source.raw(), flags);
+        self.enqueue_blocking_request(source.inner.clone(), op)
+    }
+
     pub(crate) fn rename(&self, source: &Source) -> impl Future<Output = ()> {
         let (old_path, new_path) = match &*source.source_type() {
             SourceType::Rename(o, n) => (o.clone(), n.clone()),

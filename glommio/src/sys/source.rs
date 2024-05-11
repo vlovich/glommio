@@ -51,6 +51,7 @@ pub(crate) enum SourceType {
     FdataSync,
     Fallocate,
     Truncate,
+    Flock,
     Close,
     LinkRings,
     ForeignNotifier(u64, bool),

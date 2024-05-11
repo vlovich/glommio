@@ -664,6 +664,16 @@ impl Reactor {
         }
     }
 
+    pub(crate) fn flock(&self, raw: RawFd, flags: libc::c_int) -> impl Future<Output = Source> {
+        let source = self.new_source(raw, SourceType::Flock, None);
+        let waiter = self.sys.flock(&source, flags);
+
+        async move {
+            waiter.await;
+            source
+        }
+    }
+
     pub(crate) fn rename<P, Q>(&self, old_path: P, new_path: Q) -> impl Future<Output = Source>
     where
         P: AsRef<Path>,

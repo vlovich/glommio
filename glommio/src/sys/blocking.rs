@@ -64,6 +64,7 @@ pub(super) enum BlockingThreadOp {
     CreateDir(PathBuf, libc::c_int),
     Truncate(RawFd, i64),
     CopyFileRange(RawFd, i64, RawFd, i64, usize),
+    Flock(RawFd, libc::c_int),
     Fn(Box<dyn FnOnce() + Send + 'static>),
 }
 
@@ -80,6 +81,7 @@ impl Debug for BlockingThreadOp {
                 f,
                 "copy_file_range `{fd_in}` @ `{off_in}` -> {fd_out} @ `{off_out}` for {len} bytes"
             ),
+            BlockingThreadOp::Flock(fd, flags) => write!(f, "flock `{fd}`, flags `{flags}`"),
             BlockingThreadOp::Fn(_) => write!(f, "user function"),
         }
     }
@@ -113,6 +115,13 @@ impl BlockingThreadOp {
                     len,
                     0
                 ))
+            }
+            BlockingThreadOp::Flock(fd, flags) => {
+                assert!(
+                    flags & libc::LOCK_NB != 0 || flags == libc::LOCK_UN,
+                    "Not valid to do a blocking flock"
+                );
+                raw_syscall!(flock(fd, flags))
             }
             BlockingThreadOp::Fn(f) => {
                 f();
