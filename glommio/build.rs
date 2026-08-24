@@ -33,6 +33,7 @@ fn main() {
         .file(src.join("syscall.c"))
         .file(src.join("register.c"))
         .flag("-D_GNU_SOURCE")
+        .flag("-DLIBURING_INTERNAL")
         .include(src.join("include"))
         .include(&configured_include)
         .extra_warnings(false)

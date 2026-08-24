@@ -495,7 +495,7 @@ extern "C" {
     );
 
     #[link_name = "rust_io_uring_prep_poll_remove"]
-    pub fn io_uring_prep_poll_remove(sqe: *mut io_uring_sqe, user_data: *mut libc::c_void);
+    pub fn io_uring_prep_poll_remove(sqe: *mut io_uring_sqe, user_data: libc::__u64);
 
     #[link_name = "rust_io_uring_prep_fsync"]
     pub fn io_uring_prep_fsync(sqe: *mut io_uring_sqe, fd: libc::c_int, fsync_flags: libc::c_uint);
