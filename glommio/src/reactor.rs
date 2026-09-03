@@ -67,7 +67,7 @@ impl SharedChannels {
             wake!(waker);
         }
 
-        for (_, (pending, check)) in self.wakers_map.iter_mut() {
+        for (pending, check) in self.wakers_map.values_mut() {
             if pending.is_empty() {
                 continue;
             }
@@ -343,7 +343,7 @@ impl Reactor {
                 None,
             );
             self.sys.read_dma(&source, 0, alignment as usize);
-            let result = source.collect_rw().await;
+            let _result = source.collect_rw().await;
             let result = matches!(
                 source.collect_rw().await,
                 Ok(size) if size == alignment as usize
