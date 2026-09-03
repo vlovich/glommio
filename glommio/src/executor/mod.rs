@@ -3235,14 +3235,10 @@ mod test {
             .unwrap();
 
         ex.run(async {
-            let threshold = if std::env::var("CI").is_ok_and(|val| val == "1" || val == "true") {
-                // In CI this test seems to measure ~49.8 ms - not sure why the gap in CI.
-                Duration::from_millis(40)
-            } else {
-                // 100 ms may have passed without us running for 100ms in case
-                // there are other threads. Need to be a bit more relaxed
-                Duration::from_millis(90)
-            };
+            // We have to use a conservative threshold because if we run the tests concurrently, the spin time
+            // is evaluated against wall clock and under contention this thread may end up not getting scheduled
+            // frequently enough to actually spin for 100ms.
+            let threshold = Duration::from_millis(30);
 
             let ex_ru_start = getrusage();
             timer::sleep(dur).await;
