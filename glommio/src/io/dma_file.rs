@@ -217,7 +217,13 @@ impl DmaFile {
             sys::direct_io_ify(file.as_raw_fd(), flags)?;
             let reactor = file.reactor.upgrade().unwrap();
             if reactor
-                .probe_iopoll_support(file.as_raw_fd(), o_direct_alignment, major, minor, path)
+                .probe_iopoll_support(
+                    file.as_raw_fd(),
+                    o_direct_alignment,
+                    major,
+                    minor,
+                    (dir, path),
+                )
                 .await
             {
                 PollableStatus::Pollable
